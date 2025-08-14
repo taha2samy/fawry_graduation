@@ -1,0 +1,4 @@
+k8s/*
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup

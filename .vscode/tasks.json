@@ -1,0 +1,99 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "1. Global: Init",
+            "type": "shell",
+            "command": "terraform init -upgrade",
+            "options": { "cwd": "${workspaceFolder}/global" }
+        },
+        {
+            "label": "2. Global: Apply",
+            "type": "shell",
+            "command": "terraform apply -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/global" }
+        },
+        {
+            "label": "8. Global: Destroy",
+            "type": "shell",
+            "command": "terraform destroy -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/global" }
+        },
+        {
+            "label": "3. K8s-Generator: Init",
+            "type": "shell",
+            "command": "terraform init -upgrade",
+            "options": { "cwd": "${workspaceFolder}/k8s-generator" }
+        },
+        {
+            "label": "4. K8s-Generator: Apply",
+            "type": "shell",
+            "command": "terraform apply -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/k8s-generator" }
+        },
+        {
+            "label": "7. K8s-Generator: Destroy",
+            "type": "shell",
+            "command": "terraform destroy -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/k8s-generator" }
+        },
+        {
+            "label": "5. K8s-Cluster: Init",
+            "type": "shell",
+            "command": "terraform init -upgrade",
+            "options": { "cwd": "${workspaceFolder}/k8s" }
+        },
+        {
+            "label": "6. K8s-Cluster: Apply",
+            "type": "shell",
+            "command": "terraform apply -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/k8s" }
+        },
+        {
+            "label": "9. K8s-Cluster: Destroy",
+            "type": "shell",
+            "command": "terraform destroy -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/k8s" }
+        },
+
+        {
+            "label": "✅ FULL APPLY (Build Everything)",
+            "dependsOrder": "sequence", 
+            "dependsOn": [
+                "2. Global: Apply",
+                "3. K8s-Generator: Init",
+                "4. K8s-Generator: Apply",
+                "5. K8s-Cluster: Init",
+                "6. K8s-Cluster: Apply"
+            ],
+            "command": "echo '✅ Full Apply Workflow Finished Successfully!'",
+            "type": "shell",
+            "problemMatcher": [],
+            "presentation": {
+"reveal": "always",
+"panel": "new",
+"clear": true
+}
+
+            
+        },
+        {
+            "label": "❌ FULL DESTROY (Destroy Everything)",
+            "dependsOrder": "sequence", 
+            "dependsOn": [
+                "9. K8s-Cluster: Destroy",
+                "7. K8s-Generator: Destroy",
+                "8. Global: Destroy"
+            ],
+            "command": "echo '❌ Full Destroy Workflow Finished Successfully!'",
+            "type": "shell",
+            "problemMatcher": [],
+            "presentation": {
+"reveal": "always",
+"panel": "new",
+"clear": true
+}
+
+        }
+    ]
+}
