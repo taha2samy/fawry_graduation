@@ -2,3 +2,10 @@ k8s/*
 .terraform/
 terraform.tfstate
 terraform.tfstate.backup
+*.pub
+*.pem
+generate-kubeconfigs.sh
+kubeconfig-original.yaml
+kubeconfig-tunneled.yaml
+kubeconfig-tunneled.yaml.bak
+start-tunnel.sh

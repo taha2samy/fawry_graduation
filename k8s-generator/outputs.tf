@@ -23,3 +23,5 @@ resource "local_file" "bash_script_ssl_tunnel" {
     bastion_public_dns = data.terraform_remote_state.network.outputs.public_dns
   })
 }
+
+

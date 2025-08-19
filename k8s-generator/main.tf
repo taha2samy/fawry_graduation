@@ -45,7 +45,10 @@ resource "null_resource" "kops_generate_terraform" {
         --networking=calico \
         --target=terraform \
         --out=../k8s \
+        --ssh-public-key=../public.pub \
         --yes
     EOT
   }
 }
+
+
