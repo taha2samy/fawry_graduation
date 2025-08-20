@@ -1,4 +1,8 @@
+-- ====================================================================
+--  BucketList Database Schema (Corrected and Improved Version)
+-- ====================================================================
 
+-- Create the user table
 CREATE TABLE `tbl_user` (
   `user_id` BIGINT NOT NULL AUTO_INCREMENT,
   `user_name` VARCHAR(45) NULL,
@@ -6,15 +10,17 @@ CREATE TABLE `tbl_user` (
   `user_password` VARCHAR(45) NULL,
   PRIMARY KEY (`user_id`));
 
+-- Insert a default user for initial setup
 INSERT INTO tbl_user (user_id, user_name, user_username, user_password)
 VALUES (10, 'ahmed', 'ahmed', 'ahmed');
 
-
+-- Stored Procedure to create a user
+DROP PROCEDURE IF EXISTS `sp_createUser`;
 DELIMITER $$
 CREATE PROCEDURE `sp_createUser`(
-    IN p_name VARCHAR(20),
-    IN p_username VARCHAR(100),
-    IN p_password VARCHAR(20)
+    IN p_name VARCHAR(45),       -- FIX: Matched column size
+    IN p_username VARCHAR(100),  -- Increased for safety
+    IN p_password VARCHAR(45)    -- FIX: Matched column size
 )
 BEGIN
     if ( select exists (select 1 from tbl_user where user_username = p_username) ) THEN
@@ -36,17 +42,18 @@ BEGIN
 END$$
 DELIMITER ;
 
--- Create the login validation stored procedure
+-- Stored Procedure to validate a login
+DROP PROCEDURE IF EXISTS `sp_validateLogin`;
 DELIMITER $$
 CREATE PROCEDURE `sp_validateLogin`(
-    IN p_username VARCHAR(20)
+    IN p_username VARCHAR(100)  -- CRITICAL FIX: Increased size from 20 to 100
 )
 BEGIN
     select * from tbl_user where user_username = p_username;
 END$$
 DELIMITER ;
 
--- Create the wish table in the currently selected database
+-- Create the wish table
 CREATE TABLE `tbl_wish` (
   `wish_id` int(11) NOT NULL AUTO_INCREMENT,
   `wish_title` varchar(45) DEFAULT NULL,
@@ -56,7 +63,7 @@ CREATE TABLE `tbl_wish` (
   PRIMARY KEY (`wish_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
--- Create the procedure to add a wish
+-- Stored Procedure to add a wish
 DROP PROCEDURE IF EXISTS `sp_addWish`;
 DELIMITER $$
 CREATE PROCEDURE `sp_addWish`(
@@ -81,7 +88,7 @@ BEGIN
 END$$
 DELIMITER ;
 
--- Create the procedure to get wishes by user
+-- Stored Procedure to get wishes by user
 DROP PROCEDURE IF EXISTS `sp_GetWishByUser`;
 DELIMITER $$
 CREATE PROCEDURE `sp_GetWishByUser` (
