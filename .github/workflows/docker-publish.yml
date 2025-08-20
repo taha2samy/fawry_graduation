@@ -1,9 +1,7 @@
 name: MySql CI Pipeline
 
 on:
-  push:
-    branches:
-      - 'mysql/main'  
+  push: 
     tags:
       - 'v*'         
 
