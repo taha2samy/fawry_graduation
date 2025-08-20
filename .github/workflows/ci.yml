@@ -46,13 +46,11 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run Tests
         env:
-          # The key change that solves the import error
           PYTHONPATH: .
           MYSQL_DATABASE_HOST: 127.0.0.1
           MYSQL_DATABASE_USER: root
           MYSQL_DATABASE_PASSWORD: testpassword
           MYSQL_DATABASE_DB: test_db
-        # We measure coverage on 'app.py' which is now discoverable
         run: pytest tests/ --cov=app --cov-report=xml --cov-fail-under=80
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -65,19 +63,30 @@ jobs:
     runs-on: ubuntu-latest
     needs: test 
     if: startsWith(github.ref, 'refs/tags/v')
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag is on the correct branch
+        run: |
+          git branch -r --contains ${{ github.ref_name }} | grep -q 'origin/flask/main'
+          echo "✅ Tag ${{ github.ref_name }} is on the correct branch (flask/main)."
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }} 
+
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: taha2samy/fawry-flask-app
+          images: taha2samy/fry-flask-app
+
       - name: Build and push Flask application image
         uses: docker/build-push-action@v4
         with:
