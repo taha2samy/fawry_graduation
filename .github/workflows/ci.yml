@@ -49,6 +49,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run Tests
         env:
+          PYTHONPATH: .
           MYSQL_DATABASE_HOST: 127.0.0.1
           MYSQL_DATABASE_USER: root
           MYSQL_DATABASE_PASSWORD: testpassword
