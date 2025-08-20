@@ -100,16 +100,17 @@ class TestAuthentication:
         # The error page renders the error message inside an h1 tag.
         assert b'<h1>Unauthorized Access</h1>' in home_response.data
 
-    def test_add_wish_redirects_unauthorized_user(self, client):
-        """Ensures an unauthenticated user is redirected when trying to add a wish."""
-        response = client.post('/addWish', data={
-            'inputTitle': 'Unauthorized Wish',
-            'inputDescription': 'This should fail.'
-        }, follow_redirects=False)
-        
-        assert response.status_code == 302
-        # Assert that the redirect goes to the sign-in page.
-        assert '/showSignIn' in response.headers['Location']
+    def test_add_wish_fails_for_unauthorized_user(self, client):
+            """Ensures an unauthenticated user receives a 401 Unauthorized error."""
+            response = client.post('/addWish', data={
+                'inputTitle': 'Unauthorized Wish',
+                'inputDescription': 'This should fail.'
+            })
+            
+            # FIX: Assert that the app correctly returns a 401 status code.
+            assert response.status_code == 401
+            # Also, check that the correct error message is displayed.
+            assert b'<h1>Unauthorized Access</h1>' in response.data
 
 # -----------------------------------------------------------------------------
 # Test Suite for Wishlist (Authenticated User)
