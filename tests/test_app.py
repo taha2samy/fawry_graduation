@@ -27,7 +27,7 @@ def test_main_page_renders_successfully(client):
     """Asserts that the main landing page loads correctly."""
     response = client.get('/')
     assert response.status_code == 200
-    # FIX: Check for a more reliable element, like the page title, which is less likely to change.
+    # FIX: Check for a more reliable and unique element, like the page title.
     assert b"<title>Python Flask Bucket List App</title>" in response.data
 
 def test_signup_page_renders_successfully(client):
@@ -135,14 +135,17 @@ class TestWishes:
 
     def test_get_wish_api_returns_correct_json_data(self, client_with_login):
         """Verifies the /getWish API returns wishes in JSON format."""
+        # Arrange: Add a specific wish to look for.
         client_with_login.post('/addWish', data={'inputTitle': 'Test API', 'inputDescription': 'Check JSON response.'})
+        
+        # Act
         response = client_with_login.get('/getWish')
         assert response.status_code == 200
         wishes = response.get_json()
-        # This will now work correctly after changing to jsonify in app.py
+        
+        # FIX: Check if the wish we added is present in the returned list, regardless of order.
         assert isinstance(wishes, list)
-        assert len(wishes) > 0
-        assert wishes[0]['Title'] == 'Test API'
+        assert any(wish['Title'] == 'Test API' for wish in wishes)
 
     def test_add_wish_fails_for_unauthorized_user(self, client):
         """Ensures that an unauthenticated user cannot add a wish."""
@@ -150,5 +153,6 @@ class TestWishes:
             'inputTitle': 'Attempt to add wish without login',
             'inputDescription': 'This should be rejected.'
         })
-        assert response.status_code == 200
+        # FIX: Check for the correct status code (401 Unauthorized)
+        assert response.status_code == 401
         assert b'Unauthorized Access' in response.data
