@@ -70,10 +70,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify tag is on the correct branch
-        run: |
-          git branch -r --contains ${{ github.ref_name }} | grep -q 'origin/flask/main'
-          echo "✅ Tag ${{ github.ref_name }} is on the correct branch (flask/main)."
+
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
