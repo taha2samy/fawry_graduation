@@ -22,11 +22,11 @@ jobs:
       - name: Validate Staging Overlay
         run: |
           echo ">>> Validating Staging Kustomize overlay..."
-          kustomize build kubernetes/overlays/staging > /dev/null
+          kustomize build kubernetes/mysql-db/overlays/staging > /dev/null
           echo "✅ Staging overlay is valid."
 
       - name: Validate Production Overlay
         run: |
           echo ">>> Validating Production Kustomize overlay..."
-          kustomize build kubernetes/overlays/production > /dev/null
+          kustomize build kubernetes/mysql-db/overlays/production > /dev/null
           echo "✅ Production overlay is valid."
