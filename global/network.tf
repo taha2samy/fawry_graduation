@@ -75,8 +75,7 @@ resource "aws_route_table" "private_rt" {
   }
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_instance.fck_nat_with_ssh.primary_network_interface_id
-
+    network_interface_id = aws_instance.just_for_ssh.primary_network_interface_id
   }
 
 }
@@ -157,10 +156,10 @@ resource "aws_security_group" "fck_nat_sg_with_ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-
+    from_port = 22
+    to_port   = 22
+    protocol  = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {

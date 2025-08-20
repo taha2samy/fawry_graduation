@@ -19,16 +19,10 @@ resource "aws_s3_bucket_public_access_block" "private" {
 
 data "aws_ami" "get_ami" {
   most_recent = true
-  owners      = ["137603173731"] 
-
-  filter {
-    name   = "name"
-    values = ["fck-nat-amzn2023-*-x86_64-ebs"]  
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+  owners      = ["568608671756"] 
+ filter {
+    name   = "architecture"
+    values = ["x86_64"]
   }
 }
 
@@ -51,7 +45,7 @@ resource "local_file" "put_public" {
   file_permission = 0644
 }
 
-resource "aws_instance" "fck_nat_with_ssh" {
+resource "aws_instance" "just_for_ssh" {
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.bastion.id
   source_dest_check = false
