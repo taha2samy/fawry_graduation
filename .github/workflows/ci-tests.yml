@@ -1,0 +1,32 @@
+name:  MySQL CI Pipeline
+
+on:
+  push:
+    branches: 
+      - mysql/service      
+
+
+jobs:
+  kustomize-check:
+    name: Check Kustomize Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Kustomize
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+          sudo mv kustomize /usr/local/bin/
+
+      - name: Validate Staging Overlay
+        run: |
+          echo ">>> Validating Staging Kustomize overlay..."
+          kustomize build kubernetes/overlays/staging > /dev/null
+          echo "✅ Staging overlay is valid."
+
+      - name: Validate Production Overlay
+        run: |
+          echo ">>> Validating Production Kustomize overlay..."
+          kustomize build kubernetes/overlays/production > /dev/null
+          echo "✅ Production overlay is valid."
