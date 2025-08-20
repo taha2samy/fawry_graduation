@@ -16,9 +16,16 @@ resource "aws_key_pair" "main" {
 
 resource "local_file" "private_key" {
   content         = tls_private_key.ssh.private_key_pem
-  filename        = "${path.root}/../private.pem"
+  filename        = "${path.root}/../private.pem"  
   file_permission = "0400"
 }
+
+resource "local_file" "public_key" {
+  content         = tls_private_key.ssh.public_key_openssh
+  filename        = "${path.root}/../public.pub"    
+  file_permission = "0400"
+}
+
 
 resource "aws_security_group" "nat" {
   name        = "nat-instance-sg"
