@@ -41,18 +41,14 @@ def signUp():
 
             if len(data) == 0:
                 conn.commit()
-                # FIX 1: Use jsonify to return a proper JSON response
                 return jsonify({'message': 'User created successfully !'})
             else:
-                # FIX 1: Use jsonify here as well
                 return jsonify({'error': str(data[0])})
         else:
-            # FIX 1: And here too
             return jsonify({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
-        # FIX 2: Ensure connection is always closed
         if cursor:
             cursor.close()
         if conn:
@@ -76,7 +72,6 @@ def validateLogin():
         data = cursor.fetchall()
 
         if len(data) > 0:
-            # Note: Storing plain text passwords is not secure. Use hashing in a real app.
             if data[0][3] == _password:
                 session['user'] = data[0][0]
                 return redirect('/userHome')
@@ -98,7 +93,8 @@ def userHome():
     if session.get('user'):
         return render_template('userHome.html')
     else:
-        return render_template('error.html', error='Unauthorized Access')
+        # It's also good practice to return 401 here
+        return render_template('error.html', error='Unauthorized Access'), 401
 
 @app.route('/logout')
 def logout():
@@ -107,7 +103,11 @@ def logout():
 
 @app.route('/showAddWish')
 def showAddWish():
-    return render_template('addWish.html')
+    # This page should also be protected
+    if session.get('user'):
+        return render_template('addWish.html')
+    else:
+        return render_template('error.html', error='Unauthorized Access'), 401
 
 @app.route('/addWish', methods=['POST'])
 def addWish():
@@ -130,7 +130,8 @@ def addWish():
             else:
                 return render_template('error.html', error='An error occurred!')
         else:
-            return render_template('error.html', error='Unauthorized Access')
+            # The important change for the tests
+            return render_template('error.html', error='Unauthorized Access'), 401
     except Exception as e:
         return render_template('error.html', error=str(e))
     finally:
@@ -162,14 +163,13 @@ def getWish():
                 }
                 wishes_dict.append(wish_dict)
             
-            # FIX 1: Use jsonify to return a proper JSON response with the correct content type
             return jsonify(wishes_dict)
         else:
-            return render_template('error.html', error='Unauthorized Access')
+            # The important change for the tests
+            return jsonify({'error': 'Unauthorized Access'}), 401
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
-        # FIX 2: Ensure connection is always closed
         if cursor:
             cursor.close()
         if con:
