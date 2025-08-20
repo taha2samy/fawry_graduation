@@ -28,7 +28,7 @@ This strategy avoids configuration drift and eliminates the need to duplicate YA
         └── staging
             ├── kustomization.yaml
             └── replicas.yaml```
-
+```
 ## How to Deploy
 
 To deploy the application, you will need `kubectl` installed and configured to connect to your Kubernetes cluster.
