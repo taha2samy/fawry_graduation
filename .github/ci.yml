@@ -3,7 +3,7 @@ name: Flask Application CI/CD Pipeline
 on:
   push:
     branches:
-      - 'mysql/main'  
+      - 'flask/main'  
     tags:
       - 'v*'         
 
