@@ -13,7 +13,7 @@ def client():
     """
     app.config.update({
         "TESTING": True,
-        "WTF_CSRF_ENABLED": False,  # Disable CSRF for simplified form testing
+        "WTF_CSRF_ENABLED": False,
         "SECRET_KEY": "test-secret-key-for-session-management",
     })
     with app.test_client() as client:
@@ -27,22 +27,24 @@ def test_main_page_renders_successfully(client):
     """Asserts that the main landing page loads correctly."""
     response = client.get('/')
     assert response.status_code == 200
-    # FIX: Check for the page title which is a more stable and reliable assertion.
-    assert b"<title>Python Flask Bucket List App</title>" in response.data
+    # FIX: Check for a unique and stable text from index.html
+    assert b"Sign up today" in response.data
 
 def test_signup_page_renders_successfully(client):
     """Asserts that the user registration page loads correctly."""
     response = client.get('/showSignUp')
     assert response.status_code == 200
-    # FIX: Ensure your signup.html template contains this exact h3 tag.
-    assert b"<h3>Sign Up</h3>" in response.data
+    # FIX: Check for the specific header text from signup.html
+    assert b'<h3 class="text-muted">Python Flask App</h3>' in response.data
+    assert b'placeholder="Name"' in response.data
 
 def test_signin_page_renders_successfully(client):
     """Asserts that the user login page loads correctly."""
     response = client.get('/showSignIn')
     assert response.status_code == 200
-    # FIX: Ensure your signin.html template contains this exact h3 tag.
-    assert b"<h3>Sign In</h3>" in response.data
+    # FIX: Check for the specific header text from signin.html
+    assert b'<h3 class="text-muted">Python Flask App</h3>' in response.data
+    assert b'placeholder="Email address"' in response.data
 
 # -----------------------------------------------------------------------------
 # Test Suite for User Authentication Workflows
@@ -92,12 +94,25 @@ class TestAuthentication:
         client.post('/validateLogin', data={'inputEmail': 'logout@example.com', 'inputPassword': 'pass'})
         response = client.get('/logout', follow_redirects=True)
         assert response.status_code == 200
-        assert b"<title>Python Flask Bucket List App</title>" in response.data
+        assert b"Sign up today" in response.data  # Should redirect to the main page
+        
         home_response = client.get('/userHome')
         assert b'Unauthorized Access' in home_response.data
 
+    # FIX: This test is about authentication, so it belongs in this class.
+    def test_add_wish_redirects_unauthorized_user(self, client):
+        """Ensures an unauthenticated user is redirected when trying to add a wish."""
+        response = client.post('/addWish', data={
+            'inputTitle': 'Unauthorized Wish',
+            'inputDescription': 'This should fail.'
+        }, follow_redirects=False)
+        
+        assert response.status_code == 302
+        # Assuming the app should redirect to the sign-in page.
+        assert '/showSignIn' in response.headers['Location']
+
 # -----------------------------------------------------------------------------
-# Test Suite for Wishlist (CRUD) Functionality
+# Test Suite for Wishlist (CRUD) Functionality (Authenticated User)
 # -----------------------------------------------------------------------------
 class TestWishes:
     """Groups tests for all wishlist-related endpoints, which require an authenticated user."""
@@ -113,15 +128,12 @@ class TestWishes:
         """Verifies an authenticated user can access their home page."""
         response = client_with_login.get('/userHome')
         assert response.status_code == 200
-        # FIX: Ensure your userHome.html template contains this exact h1 tag.
-        assert b"<h1>My Bucket List</h1>" in response.data
+        # FIX: Check for the "Add Wish" link, which is unique to the user home page.
+        assert b'<a href="/showAddWish">Add Wish</a>' in response.data
 
     def test_add_wish_succeeds_and_redirects(self, client_with_login):
         """Tests that creating a new wish correctly redirects the user."""
-        response = client_with_login.post('/addWish', data={
-            'inputTitle': 'Learn Advanced Pytest',
-            'inputDescription': 'Master fixtures and plugins.'
-        })
+        response = client_with_login.post('/addWish', data={'inputTitle': 'Learn Pytest', 'inputDescription': 'Master fixtures.'})
         assert response.status_code == 302
         assert response.headers['Location'] == '/userHome'
 
@@ -132,17 +144,4 @@ class TestWishes:
         assert response.status_code == 200
         wishes = response.get_json()
         assert isinstance(wishes, list)
-        # FIX: Robustly check if the wish is present, regardless of order.
         assert any(wish['Title'] == 'Test API' for wish in wishes)
-
-    def test_add_wish_redirects_unauthorized_user(self, client):
-        """Ensures an unauthenticated user is redirected when trying to add a wish."""
-        response = client.post('/addWish', data={
-            'inputTitle': 'Attempt to add wish without login',
-            'inputDescription': 'This should be rejected.'
-        }, follow_redirects=False)
-        
-        # FIX: Assert that the user is being redirected to the sign-in page.
-        assert response.status_code == 302
-        # Assuming the redirect should go to the sign-in page. Change if needed.
-        assert '/showSignIn' in response.headers['Location']
