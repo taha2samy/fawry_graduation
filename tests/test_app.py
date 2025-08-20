@@ -20,31 +20,30 @@ def client():
         yield client
 
 # -----------------------------------------------------------------------------
-# Test Suite for Static Page Rendering and Basic Routes
+# Test Suite for Static Page Rendering
 # -----------------------------------------------------------------------------
 
 def test_main_page_renders_successfully(client):
-    """Asserts that the main landing page loads correctly."""
+    """Asserts that the main landing page (index.html) loads correctly."""
     response = client.get('/')
     assert response.status_code == 200
-    # FIX: Check for a unique and stable text from index.html
-    assert b"Sign up today" in response.data
+    # FIX: Check for the unique "Sign up today" button from index.html
+    assert b'href="showSignUp"' in response.data
+    assert b'Sign up today' in response.data
 
 def test_signup_page_renders_successfully(client):
-    """Asserts that the user registration page loads correctly."""
+    """Asserts that the user registration page (signup.html) loads correctly."""
     response = client.get('/showSignUp')
     assert response.status_code == 200
-    # FIX: Check for the specific header text from signup.html
-    assert b'<h3 class="text-muted">Python Flask App</h3>' in response.data
-    assert b'placeholder="Name"' in response.data
+    # FIX: Check for the unique "Sign up" button from signup.html
+    assert b'<button id="btnSignUp"' in response.data
 
 def test_signin_page_renders_successfully(client):
-    """Asserts that the user login page loads correctly."""
+    """Asserts that the user login page (signin.html) loads correctly."""
     response = client.get('/showSignIn')
     assert response.status_code == 200
-    # FIX: Check for the specific header text from signin.html
-    assert b'<h3 class="text-muted">Python Flask App</h3>' in response.data
-    assert b'placeholder="Email address"' in response.data
+    # FIX: Check for the unique "Sign in" button from signin.html
+    assert b'<button id="btnSignIn"' in response.data
 
 # -----------------------------------------------------------------------------
 # Test Suite for User Authentication Workflows
@@ -86,7 +85,8 @@ class TestAuthentication:
         client.post('/signUp', data={'inputName': 'Wrong Pass User', 'inputEmail': 'wrong.pass@example.com', 'inputPassword': 'correct_password'})
         response = client.post('/validateLogin', data={'inputEmail': 'wrong.pass@example.com', 'inputPassword': 'incorrect_password'})
         assert response.status_code == 200
-        assert b'Wrong Email address or Password' in response.data
+        # The error page renders the error message inside an h1 tag.
+        assert b'<h1>Wrong Email address or Password</h1>' in response.data
 
     def test_logout_clears_session_and_redirects(self, client):
         """Verifies that the logout endpoint terminates the session and redirects to the main page."""
@@ -94,12 +94,12 @@ class TestAuthentication:
         client.post('/validateLogin', data={'inputEmail': 'logout@example.com', 'inputPassword': 'pass'})
         response = client.get('/logout', follow_redirects=True)
         assert response.status_code == 200
-        assert b"Sign up today" in response.data  # Should redirect to the main page
+        assert b"Sign up today" in response.data  # Should be on the main page
         
         home_response = client.get('/userHome')
-        assert b'Unauthorized Access' in home_response.data
+        # The error page renders the error message inside an h1 tag.
+        assert b'<h1>Unauthorized Access</h1>' in home_response.data
 
-    # FIX: This test is about authentication, so it belongs in this class.
     def test_add_wish_redirects_unauthorized_user(self, client):
         """Ensures an unauthenticated user is redirected when trying to add a wish."""
         response = client.post('/addWish', data={
@@ -108,11 +108,11 @@ class TestAuthentication:
         }, follow_redirects=False)
         
         assert response.status_code == 302
-        # Assuming the app should redirect to the sign-in page.
+        # Assert that the redirect goes to the sign-in page.
         assert '/showSignIn' in response.headers['Location']
 
 # -----------------------------------------------------------------------------
-# Test Suite for Wishlist (CRUD) Functionality (Authenticated User)
+# Test Suite for Wishlist (Authenticated User)
 # -----------------------------------------------------------------------------
 class TestWishes:
     """Groups tests for all wishlist-related endpoints, which require an authenticated user."""
@@ -128,7 +128,7 @@ class TestWishes:
         """Verifies an authenticated user can access their home page."""
         response = client_with_login.get('/userHome')
         assert response.status_code == 200
-        # FIX: Check for the "Add Wish" link, which is unique to the user home page.
+        # FIX: Check for the "Add Wish" link, which is unique to userHome.html
         assert b'<a href="/showAddWish">Add Wish</a>' in response.data
 
     def test_add_wish_succeeds_and_redirects(self, client_with_login):
