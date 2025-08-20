@@ -60,6 +60,7 @@
             "label": "✅ FULL APPLY (Build Everything)",
             "dependsOrder": "sequence", 
             "dependsOn": [
+                "1. Global: Init",
                 "2. Global: Apply",
                 "3. K8s-Generator: Init",
                 "4. K8s-Generator: Apply",

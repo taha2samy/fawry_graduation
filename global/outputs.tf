@@ -14,7 +14,7 @@ output "s3_url" {
 }
 output "public_dns" {
   # value = aws_instance.just_for_ssh.ipv6_addresses[0]
-  value = aws_instance.just_for_ssh.public_dns
+  value = aws_instance.fck_nat_with_ssh.public_ip
 
 }
 output "private_key_file" {

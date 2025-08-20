@@ -73,13 +73,12 @@ resource "aws_route_table" "private_rt" {
     ipv6_cidr_block        = "::/0" 
     egress_only_gateway_id = aws_egress_only_internet_gateway.egw.id
   }
-
-
-
   route {
-    cidr_block           = "0.0.0.0/0"
-    network_interface_id = aws_instance.just_for_ssh.primary_network_interface_id
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_instance.fck_nat_with_ssh.primary_network_interface_id
+
   }
+
 }
 
 resource "aws_subnet" "k8s" {
@@ -138,42 +137,34 @@ resource "aws_route53_zone" "k8s_private" {
   }
 }
 
-resource "aws_security_group" "dns64" {
-  name        = "dns"
+resource "aws_security_group" "fck_nat_sg_with_ssh" {
+  name        = "fck-nat-sg"
+  description = "Allows traffic for fck-nat instance"
   vpc_id      = aws_vpc.private_vpc.id
-  
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1" 
+    cidr_blocks = [aws_vpc.private_vpc.cidr_block] 
+    ipv6_cidr_blocks = [aws_vpc.private_vpc.ipv6_cidr_block]
+  }
 
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
   }
   ingress {
-    description = "Allow DNS queries (UDP) from within the VPC"
-    protocol    = "udp"
-    from_port   = 53
-    to_port     = 53
-    cidr_blocks = [aws_vpc.private_vpc.cidr_block]
-  }
-  ingress {
-    description = "Allow DNS queries (TCP) from within the VPC"
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
-    from_port   = 53
-    to_port     = 53
-    cidr_blocks = [aws_vpc.private_vpc.cidr_block]
-  }
-    ingress {
-    description = "Allow all traffic from within the VPC"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1" # "-1" means all protocols
-    cidr_blocks = [aws_vpc.private_vpc.cidr_block]
+
   }
 
-
-
-
+  tags = {
+    Name = "fck-nat-sg"
+  }
 }
 

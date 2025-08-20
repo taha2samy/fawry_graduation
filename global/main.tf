@@ -19,16 +19,11 @@ resource "aws_s3_bucket_public_access_block" "private" {
 
 data "aws_ami" "get_ami" {
   most_recent = true
-  owners      = ["099720109477"] # Canonical
+  owners      = ["137603173731"] 
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
+    values = ["fck-nat-amzn2023-*-x86_64-ebs"]  
   }
 
   filter {
@@ -56,51 +51,20 @@ resource "local_file" "put_public" {
   file_permission = 0644
 }
 
-resource "aws_instance" "just_for_ssh" {
+resource "aws_instance" "fck_nat_with_ssh" {
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.bastion.id
-
+  source_dest_check = false
   ami           = data.aws_ami.get_ami.id
-  vpc_security_group_ids = [aws_security_group.dns64.id,aws_security_group.ssh.id]
+  vpc_security_group_ids = [aws_security_group.fck_nat_sg_with_ssh.id]
   key_name               = aws_key_pair.ssh_key.key_name
-
-
-  user_data_replace_on_change = true
   user_data = file("${path.module}/scripts/configure-bastion-ubuntu.sh")
 
   tags = {
     Name = "Bastion Host (Jumping Box)"
   }
 }
-resource "aws_network_interface" "dns_eni" {
-  subnet_id       = aws_subnet.bastion.id
-  security_groups = [aws_security_group.dns64.id,aws_security_group.ssh.id]
-  source_dest_check = false
 
-  tags = {
-    Name = "ENI-for-DNS-NAT64-Gateway"
-  }
-}
 
-resource "aws_network_interface_attachment" "public_eni_attachment" {
-  instance_id          = aws_instance.just_for_ssh.id
-  network_interface_id = aws_network_interface.dns_eni.id
-  device_index         = 1
-  
-  
-}
-resource "aws_vpc_dhcp_options" "custom_dns_resolver" {
-  domain_name_servers = [
-    aws_network_interface.dns_eni.private_ip,
-    
-  ]
-  domain_name = "eu-west-1.compute.internal"
 
-  tags = {
-    Name = "DHCP-Options-for-NAT64-DNS"
-  }
-}
-resource "aws_vpc_dhcp_options_association" "dns_association" {
-  vpc_id          = aws_vpc.private_vpc.id
-  dhcp_options_id = aws_vpc_dhcp_options.custom_dns_resolver.id
-}
+
