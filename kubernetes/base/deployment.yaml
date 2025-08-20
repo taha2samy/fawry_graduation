@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+  labels:
+    app: flask-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+      - name: flask-app-container
+        image: taha2samy/fawry-flask-app:latest
+        ports:
+        - containerPort: 5002
+        env:
+        - name: MYSQL_DATABASE_HOST
+          value: "mysql-service.database.svc.cluster.local"
+        - name: MYSQL_DATABASE_DB
+          value: "BucketList"
+        - name: MYSQL_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: username
+        - name: MYSQL_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: password
