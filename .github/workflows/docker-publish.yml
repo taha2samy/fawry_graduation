@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*' 
+    branches:
+      - 'mysql/main
 
 jobs:
   build-and-push:
