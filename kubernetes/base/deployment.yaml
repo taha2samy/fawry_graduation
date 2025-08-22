@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: flask-app-container
-        image: taha2samy/fawry-flask-app:latest
+        image: taha2samy/fry-flask-app:latest
         ports:
         - containerPort: 5002
         env:
