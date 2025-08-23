@@ -5,9 +5,17 @@ metadata:
 spec:
   volumeClaimTemplates:
   - metadata:
-      name: mysql-persistent-storage
+      name: mysql-persistent-storage 
     spec:
-      accessModes: ["ReadWriteOnce"] 
       resources:
         requests:
           storage: 5Gi
+  template:
+    spec:
+      containers:
+      - name: mysql
+        resources:
+          limits:
+            memory: "2Gi" 
+          requests:
+            memory: "1Gi"   
