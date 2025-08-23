@@ -23,5 +23,17 @@ resource "local_file" "bash_script_ssl_tunnel" {
     bastion_public_dns = data.terraform_remote_state.network.outputs.public_dns
   })
 }
+resource "local_file" "env" {
+  filename        = "../.env"
+  file_permission = "0755"
+
+  content = templatefile("${path.module}/templates/.env.tpl", {
+    cluster_name       = var.kops_cluster_name
+    private_key_file   = local.trimmed_private_key_file
+    bastion_public_dns = data.terraform_remote_state.network.outputs.public_dns
+    s3_url             = data.terraform_remote_state.network.outputs.s3_url
+    kop_state          = var.kops_state_store
+})
+}
 
 

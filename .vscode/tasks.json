@@ -158,6 +158,21 @@
                 "clear": true
             }
         },
+                {
+            "label": "Pre-Setup: Install Config",
+            "type": "shell",
+            "command": "pre_setup/add_loadBalancer_and_certManager.sh",
+            "options": { "cwd": "${workspaceFolder}" },
+            
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
         {
             "label": "ArgoCD: Init",
             "type": "shell",
@@ -219,20 +234,6 @@
             
         },
         {
-            "label": "Apps (Generator): Init",
-            "type": "shell",
-            "command": "terraform init",
-            "options": { "cwd": "${workspaceFolder}/install apps" },
-            "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
-        },
-        {
-            "label": "Apps (Generator): Apply",
-            "type": "shell",
-            "command": "terraform apply -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/install apps" },
-            "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
-        },
-        {
             "label": "ArgoCD Repo: Setup",
             "type": "shell",
             "command": "./setup-repo.sh",
@@ -242,16 +243,31 @@
         {
             "label": "Apps (Manifests): Apply",
             "type": "shell",
-            "command": "kubectl --kubeconfig='./../kubeconfig-original.yaml' apply -f .",
+            "command": "kubectl --kubeconfig='./../kubeconfig-original.yaml' apply -f . -R",
             "options": { "cwd": "${workspaceFolder}/install apps" },
             "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
         },
         {
             "label": "Apps (Manifests): Delete",
             "type": "shell",
-            "command": "kubectl --kubeconfig='./../kubeconfig-original.yaml' delete -f .",
+            "command": "kubectl --kubeconfig='./../kubeconfig-original.yaml' delete -f . -R",
             "options": { "cwd": "${workspaceFolder}/install apps" },
             "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
+        },
+               {
+            "label": "K8s: Destruction",
+            "type": "shell",
+            "command": "pre_setup/delete-cluster.sh",
+            "options": { "cwd": "${workspaceFolder}" },
+            
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
         },
         {
             "label": "✅ Full Apply: Infrastructure",
@@ -273,7 +289,7 @@
             "label": "❌ Full Destroy: Infrastructure",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "ArgoCD: Destroy",
+                "K8s: Destruction" ,
                 "K8s Cluster: Destroy",
                 "K8s Generator: Destroy",
                 "Global: Destroy"

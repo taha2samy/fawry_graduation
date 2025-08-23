@@ -1,0 +1,42 @@
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  name: nodes-spot
+  labels:
+    kops.k8s.io/cluster: api.internal.fawry.example.com
+spec:
+  role: Node
+  image: 099720109477/ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610
+  minSize: 4
+  maxSize: 10
+  subnets:
+    - eu-west-1a
+    - eu-west-1b
+    - eu-west-1c
+  nodeLabels:
+    lifecycle: Spot
+  mixedInstancesPolicy:
+    instancesDistribution:
+      onDemandBase: 0
+      onDemandAboveBase: 0
+      spotAllocationStrategy: capacity-optimized-prioritized
+    instances:
+    - t3.xlarge
+    - t3a.xlarge
+    - t3.large
+    - t3a.large
+    - t3.medium
+    - t3a.medium
+    overrides:
+    - instanceType: t3.xlarge
+      weightedCapacity: "4"
+    - instanceType: t3a.xlarge
+      weightedCapacity: "4"
+    - instanceType: t3.large
+      weightedCapacity: "2"
+    - instanceType: t3a.large
+      weightedCapacity: "2"
+    - instanceType: t3.medium
+      weightedCapacity: "2"
+    - instanceType: t3a.medium
+      weightedCapacity: "2"

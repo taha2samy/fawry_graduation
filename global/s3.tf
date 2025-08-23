@@ -24,3 +24,20 @@ resource "local_file" "config" {
     state_store = var.kops_state_store
   })
 }
+
+resource "local_file" "apply_on_cluster" {
+  filename = "${path.module}/../pre_setup/apply-on-cluster.sh"
+  content  = templatefile("${path.module}/scripts/apply-on-cluster-sh.tpl", {
+    bucket_name = "s3://${aws_s3_bucket.backend.bucket}"
+    cluster_name = var.kops_cluster_name
+    state_store = var.kops_state_store
+  })
+}
+resource "local_file" "delete_cluster" {
+  filename = "${path.module}/../pre_setup/delete-cluster.sh"
+  content  = templatefile("${path.module}/scripts/delete-cluster.sh.tpl", {
+    bucket_name = "s3://${aws_s3_bucket.backend.bucket}"
+    cluster_name = var.kops_cluster_name
+    state_store = var.kops_state_store
+  })
+}

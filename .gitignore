@@ -13,5 +13,6 @@ global/.terraform.tfstate.lock.info
 cluster.yaml
 ./kubeconfig-original.yaml
 ./kubeconfig-tunneled.yaml
-*terraform.tfstate
+*terraform.tfstate*
+install apps/*
 **/README*
