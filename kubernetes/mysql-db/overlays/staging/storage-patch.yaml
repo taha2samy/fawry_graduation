@@ -9,4 +9,13 @@ spec:
     spec:
       resources:
         requests:
-          storage: 2Gi
+          storage: 1Gi
+  template:
+    spec:
+      containers:
+      - name: mysql
+        resources:
+          limits:
+            memory: "1024Mi"
+          requests:
+            memory: "512Mi"
