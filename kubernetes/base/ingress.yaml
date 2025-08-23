@@ -2,7 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: flask-app-ingress
-  namespace: production
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: instance
@@ -10,8 +9,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-  - host: flask.your-domain.com
-    http:
+  - http:
       paths:
       - path: /
         pathType: Prefix
