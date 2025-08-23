@@ -1,12 +1,12 @@
 
 
 resource "local_file" "kubeconfig_script_generator" {
-  filename        = "../generate-kubeconfigs.sh"
+  filename        = "../pre_setup/generate-kubeconfigs.sh"
   file_permission = "0755"
 
   content = templatefile("${path.module}/templates/generate-kubeconfigs.sh.tpl", {
     cluster_name = var.kops_cluster_name
-    kops_state   = "${local.s3}/${var.kops_state_store}"
+    kops_state   = "${data.terraform_remote_state.network.outputs.s3_url}/${var.kops_state_store}"
   })
 }
 locals {
@@ -14,7 +14,7 @@ locals {
 
 }
 resource "local_file" "bash_script_ssl_tunnel" {
-  filename        = "../start-tunnel.sh"
+  filename        = "../pre_setup/start-tunnel.sh"
   file_permission = "0755"
 
   content = templatefile("${path.module}/templates/start-tunnel.sh.tpl", {

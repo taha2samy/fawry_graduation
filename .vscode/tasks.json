@@ -2,99 +2,312 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "1. Global: Init",
+            "label": "Global: Init",
             "type": "shell",
+            "detail": "init terraform for basic infrastructure",
             "command": "terraform init -upgrade",
-            "options": { "cwd": "${workspaceFolder}/global" }
-        },
-        {
-            "label": "2. Global: Apply",
-            "type": "shell",
-            "command": "terraform apply -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/global" }
-        },
-        {
-            "label": "8. Global: Destroy",
-            "type": "shell",
-            "command": "terraform destroy -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/global" }
-        },
-        {
-            "label": "3. K8s-Generator: Init",
-            "type": "shell",
-            "command": "terraform init -upgrade",
-            "options": { "cwd": "${workspaceFolder}/k8s-generator" }
-        },
-        {
-            "label": "4. K8s-Generator: Apply",
-            "type": "shell",
-            "command": "terraform apply -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/k8s-generator" }
-        },
-        {
-            "label": "7. K8s-Generator: Destroy",
-            "type": "shell",
-            "command": "terraform destroy -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/k8s-generator" }
-        },
-        {
-            "label": "5. K8s-Cluster: Init",
-            "type": "shell",
-            "command": "terraform init -upgrade",
-            "options": { "cwd": "${workspaceFolder}/k8s" }
-        },
-        {
-            "label": "6. K8s-Cluster: Apply",
-            "type": "shell",
-            "command": "terraform apply -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/k8s" }
-        },
-        {
-            "label": "9. K8s-Cluster: Destroy",
-            "type": "shell",
-            "command": "terraform destroy -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/k8s" }
-        },
-
-        {
-            "label": "✅ FULL APPLY (Build Everything)",
-            "dependsOrder": "sequence", 
-            "dependsOn": [
-                "1. Global: Init",
-                "2. Global: Apply",
-                "3. K8s-Generator: Init",
-                "4. K8s-Generator: Apply",
-                "5. K8s-Cluster: Init",
-                "6. K8s-Cluster: Apply"
-            ],
-            "command": "echo '✅ Full Apply Workflow Finished Successfully!'",
-            "type": "shell",
-            "problemMatcher": [],
+            "options": { "cwd": "${workspaceFolder}/global" },
             "presentation": {
-"reveal": "always",
-"panel": "new",
-"clear": true
-}
-
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "Global: Apply",
+            "type": "shell",
+            "command": "terraform apply -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/global" },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "Global: Destroy",
+            "type": "shell",
+            "command": "terraform destroy -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/global" },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "K8s Generator: Init",
+            "type": "shell",
+            "command": "terraform init -upgrade",
+            "options": { "cwd": "${workspaceFolder}/k8s-generator" },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "K8s Generator: Apply",
+            "type": "shell",
+            "command": "terraform apply -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/k8s-generator" },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "K8s Generator: Destroy",
+            "type": "shell",
+            "command": "terraform destroy -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/k8s-generator" },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "K8s Cluster: Init",
+            "type": "shell",
+            "command": "terraform init -upgrade",
+            "options": { "cwd": "${workspaceFolder}/k8s" },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "K8s Cluster: Apply",
+            "type": "shell",
+            "command": "terraform apply -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/k8s" },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "K8s Cluster: Destroy",
+            "type": "shell",
+            "command": "terraform destroy -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/k8s" },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "Pre-Setup: Generate Kubeconfigs",
+            "type": "shell",
+            "command": "./pre_setup/generate-kubeconfigs.sh",
+            "options": { "cwd": "${workspaceFolder}" },
+            
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "Pre-Setup: Install ALB & Cert-Manager",
+            "type": "shell",
+            "command": "pre_setup/add_loadBalancer_and_certManager.sh",
+            "options": { "cwd": "${workspaceFolder}" },
+            
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "ArgoCD: Init",
+            "type": "shell",
+            "command": "terraform init",
+            "options": { "cwd": "${workspaceFolder}/install argocd" },,
+            
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
             
         },
         {
-            "label": "❌ FULL DESTROY (Destroy Everything)",
-            "dependsOrder": "sequence", 
+            "label": "ArgoCD: Install",
+            "type": "shell",
+            "command": "terraform apply -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/install argocd" },
+    
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "ArgoCD: Destroy",
+            "type": "shell",
+            "command": "terraform destroy -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/install argocd" },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "ArgoCD: Port Forward",
+            "type": "shell",
+            "command": "./argo_forwarding.sh",
+            "options": { "cwd": "${workspaceFolder}/argocd" },,
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+            
+        },
+        {
+            "label": "Apps (Generator): Init",
+            "type": "shell",
+            "command": "terraform init",
+            "options": { "cwd": "${workspaceFolder}/install apps" },
+            "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
+        },
+        {
+            "label": "Apps (Generator): Apply",
+            "type": "shell",
+            "command": "terraform apply -auto-approve",
+            "options": { "cwd": "${workspaceFolder}/install apps" },
+            "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
+        },
+        {
+            "label": "ArgoCD Repo: Setup",
+            "type": "shell",
+            "command": "./setup-repo.sh",
+            "options": { "cwd": "${workspaceFolder}/install apps" },
+            "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
+        },
+        {
+            "label": "Apps (Manifests): Apply",
+            "type": "shell",
+            "command": "kubectl --kubeconfig='./../kubeconfig-original.yaml' apply -f .",
+            "options": { "cwd": "${workspaceFolder}/install apps" },
+            "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
+        },
+        {
+            "label": "Apps (Manifests): Delete",
+            "type": "shell",
+            "command": "kubectl --kubeconfig='./../kubeconfig-original.yaml' delete -f .",
+            "options": { "cwd": "${workspaceFolder}/install apps" },
+            "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
+        },
+        {
+            "label": "✅ Full Apply: Infrastructure",
+            "dependsOrder": "sequence",
             "dependsOn": [
-                "9. K8s-Cluster: Destroy",
-                "7. K8s-Generator: Destroy",
-                "8. Global: Destroy"
+                "Global: Init",
+                "Global: Apply",
+                "K8s Generator: Init",
+                "K8s Generator: Apply",
+                "K8s Cluster: Init",
+                "K8s Cluster: Apply"
             ],
-            "command": "echo '❌ Full Destroy Workflow Finished Successfully!'",
+            "command": "echo '✅ Full Infrastructure Apply Workflow Finished Successfully!'",
             "type": "shell",
             "problemMatcher": [],
-            "presentation": {
-"reveal": "always",
-"panel": "new",
-"clear": true
-}
-
+            "presentation": { "reveal": "always", "panel": "new", "clear": true }
+        },
+        {
+            "label": "❌ Full Destroy: Infrastructure",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "ArgoCD: Destroy",
+                "K8s Cluster: Destroy",
+                "K8s Generator: Destroy",
+                "Global: Destroy"
+            ],
+            "command": "echo '❌ Full Infrastructure Destroy Workflow Finished Successfully!'",
+            "type": "shell",
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "panel": "new", "clear": true }
+        },
+        {
+            "label": "✅ Full Apply: Applications",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "ArgoCD: Init",
+                "ArgoCD: Install",
+                "ArgoCD Repo: Setup",
+                "Apps (Manifests): Apply"
+            ],
+            "command": "echo '✅ Full Application Deployment Workflow Finished Successfully!'",
+            "type": "shell",
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "panel": "new", "clear": true }
+        },
+        {
+            "label": "❌ Full Destroy: Applications",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Apps (Manifests): Delete",
+                "ArgoCD: Destroy"
+            ],
+            "command": "echo '❌ Full Application Destroy Workflow Finished Successfully!'",
+            "type": "shell",
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "panel": "new", "clear": true }
         }
     ]
 }

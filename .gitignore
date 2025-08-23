@@ -10,3 +10,7 @@ kubeconfig-tunneled.yaml
 kubeconfig-tunneled.yaml.bak
 start-tunnel.sh
 global/.terraform.tfstate.lock.info
+cluster.yaml
+./kubeconfig-original.yaml
+./kubeconfig-tunneled.yaml
+*terraform.tfstate

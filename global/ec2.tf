@@ -16,13 +16,13 @@ resource "aws_key_pair" "main" {
 
 resource "local_file" "private_key" {
   content         = tls_private_key.ssh.private_key_pem
-  filename        = "${path.root}/../private.pem"  
+  filename        = "${path.root}/../ssh keys/private.pem"  
   file_permission = "0400"
 }
 
 resource "local_file" "public_key" {
   content         = tls_private_key.ssh.public_key_openssh
-  filename        = "${path.root}/../public.pub"    
+  filename        = "${path.root}/../ssh keys/public.pub"    
   file_permission = "0400"
 }
 
@@ -60,7 +60,7 @@ resource "aws_security_group" "nat" {
 resource "aws_instance" "nat" {
   ami                         = data.aws_ami.fck_nat.id
   instance_type               = "t3.micro"
-  subnet_id                   = aws_subnet.main["public-bastion-c"].id
+  subnet_id                   = aws_subnet.main["public-a"].id
   key_name                    = aws_key_pair.main.key_name
   vpc_security_group_ids      = [aws_security_group.nat.id]
   source_dest_check           = false

@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 kops export kubeconfig \
   --name "${cluster_name}" \
@@ -8,5 +7,6 @@ kops export kubeconfig \
   --kubeconfig ./kubeconfig-original.yaml
 
 cp ./kubeconfig-original.yaml ./kubeconfig-tunneled.yaml
-
-sed -i.bak "s|https://api.${cluster_name}|https://127.0.0.1:8443|g" ./kubeconfig-tunneled.yaml
+yq -i '(.clusters[] | select(.name == "api.internal.fawry.example.com").cluster.server) = "https://127.0.0.1:8443"' ./kubeconfig-tunneled.yaml
+#export KUBECONFIG=$(pwd)/kubeconfig-tunneled.yaml
+#export KUBECONFIG=$(pwd)/kubeconfig-original.yaml

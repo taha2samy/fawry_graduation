@@ -16,22 +16,16 @@ resource "aws_egress_only_internet_gateway" "egw" {
 resource "aws_subnet" "main" {
   for_each = local.subnets
 
-  vpc_id                          = aws_vpc.main.id
-  cidr_block                      = each.value.cidr_block
-  availability_zone               = data.aws_availability_zones.available.names[each.value.az_index]
-  map_public_ip_on_launch         = each.value.is_public
-  assign_ipv6_address_on_creation = true
-  ipv6_cidr_block = cidrsubnet(
-    aws_vpc.main.ipv6_cidr_block,
-    8,
-    each.value.az_index
-  )
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = each.value.cidr_block
+  availability_zone       = data.aws_availability_zones.available.names[each.value.az_index]
+  map_public_ip_on_launch = each.value.is_public
 
   tags = {
-    Name                                               = "subnet-${each.key}"
-    "kubernetes.io/cluster/${var.kops_cluster_name}"   = "shared"
-    "kubernetes.io/role/elb"                           = each.value.is_public ? "1" : null
-    "kubernetes.io/role/internal-elb"                  = !each.value.is_public ? "1" : null
+    Name = "subnet-${each.key}"
+    "kubernetes.io/cluster/api.${var.kops_cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                      = each.value.is_public ? "1" : null
+    "kubernetes.io/role/internal-elb"             = !each.value.is_public ? "1" : null
   }
 }
 
@@ -45,7 +39,8 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.main.id
+  for_each = { for k, v in local.subnets : k => v if !v.is_public }
+  vpc_id   = aws_vpc.main.id
 
   route {
     cidr_block           = "0.0.0.0/0"
@@ -58,8 +53,11 @@ resource "aws_route_table" "private" {
   }
 }
 
+
 resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.main["public-bastion-c"].id
+  for_each = { for k, v in local.subnets : k => v if v.is_public }
+
+  subnet_id      = aws_subnet.main[each.key].id
   route_table_id = aws_route_table.public.id
 }
 
@@ -67,7 +65,5 @@ resource "aws_route_table_association" "private" {
   for_each = { for k, v in local.subnets : k => v if !v.is_public }
 
   subnet_id      = aws_subnet.main[each.key].id
-  route_table_id = aws_route_table.private.id
+  route_table_id = aws_route_table.private[each.key].id
 }
-
-
