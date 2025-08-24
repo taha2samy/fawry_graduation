@@ -21,7 +21,7 @@ spec:
         - containerPort: 5002
         env:
         - name: MYSQL_DATABASE_HOST
-          value: "mysql-service.database.svc.cluster.local"
+          value: "mysql-db-connector"
         - name: MYSQL_DATABASE_DB
           valueFrom:
             secretKeyRef:
