@@ -129,55 +129,39 @@
             }
         },
         {
-            "label": "Pre-Setup: Generate Kubeconfigs",
+            "label": "Kube: 🛠️ set kubeconfig",
             "type": "shell",
-            "command": "./pre_setup/generate-kubeconfigs.sh",
-            "options": { "cwd": "${workspaceFolder}" },
-            
+            "command":  "touch .env && (grep -q '^export KUBECONFIG=' .env || ( [ -s .env ] && sed -i \"1i export KUBECONFIG=kubeconfig/${input:kubeconfigFile}\" .env || echo \"export KUBECONFIG=kubeconfig/${input:kubeconfigFile}\" > .env )) && echo '.env file updated successfully!'",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "presentation": {
-                "echo": true,
                 "reveal": "silent",
-                "focus": false,
                 "panel": "dedicated",
+                "focus": false,
+                "clear": true,
                 "showReuseMessage": true,
-                "clear": true
-            }
+                
+            },
         },
         {
-            "label": "Pre-Setup: Install ALB & Cert-Manager",
+            "label": "ArgoCD: 🚀 Run a Scripts",
             "type": "shell",
-            "command": "pre_setup/add_loadBalancer_and_certManager.sh",
-            "options": { "cwd": "${workspaceFolder}" },
-            
+            "command": "./argocd/${input:argoScript}",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": false,
+                "reveal": "always",
                 "panel": "dedicated",
-                "showReuseMessage": true,
                 "clear": true
-            }
-        },
-                {
-            "label": "Pre-Setup: Install Config",
-            "type": "shell",
-            "command": "pre_setup/add_loadBalancer_and_certManager.sh",
-            "options": { "cwd": "${workspaceFolder}" },
-            
-            "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": true
-            }
+            },
         },
         {
             "label": "ArgoCD: Init",
             "type": "shell",
             "command": "terraform init",
-            "options": { "cwd": "${workspaceFolder}/install argocd" },,
+            "options": { "cwd": "${workspaceFolder}/install argocd" },
             
             "presentation": {
                 "echo": true,
@@ -219,10 +203,10 @@
             }
         },
         {
-            "label": "ArgoCD: Port Forward",
+            "label": "ArgoCD: 🔌 Port Forward",
             "type": "shell",
-            "command": "./argo_forwarding.sh",
-            "options": { "cwd": "${workspaceFolder}/argocd" },,
+            "command": "./argocd/argo_port_forwarding.sh",
+            "options": { "cwd": "${workspaceFolder}" },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -243,21 +227,21 @@
         {
             "label": "Apps (Manifests): Apply",
             "type": "shell",
-            "command": "kubectl --kubeconfig='./../kubeconfig-original.yaml' apply -f . -R",
+            "command": "kubectl apply -f . -R",
             "options": { "cwd": "${workspaceFolder}/install apps" },
             "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
         },
         {
             "label": "Apps (Manifests): Delete",
             "type": "shell",
-            "command": "kubectl --kubeconfig='./../kubeconfig-original.yaml' delete -f . -R",
+            "command": "kubectl delete -f . -R",
             "options": { "cwd": "${workspaceFolder}/install apps" },
             "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
         },
-               {
+        {
             "label": "K8s: Destruction",
             "type": "shell",
-            "command": "pre_setup/delete-cluster.sh",
+            "command": "k8s_remover/delete-cluster.sh",
             "options": { "cwd": "${workspaceFolder}" },
             
             "presentation": {
@@ -268,6 +252,87 @@
                 "showReuseMessage": true,
                 "clear": true
             }
+        },
+        {
+            "label": "Kube: 📄 Apply a Single Manifest of apps",
+            "type": "shell",
+            "command": "kubectl apply -f 'install apps/${input:manifestFile}'",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "": []
+        },
+        {
+            "label": "Kube: 📄 delete a Single Manifest of apps",
+            "type": "shell",
+        "command": "kubectl delete -f 'install apps/${input:manifestFile}'",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+        },
+        {
+            "label": "Kube: 📜 View Deployment YAML",
+            "type": "shell",
+            "command": "kubectl get deploy -n ${input:namespace} ${input:deploymentName} -o yaml",
+            "problemMatcher": []
+        },
+        {
+            "label": "Kube: $(debug-breakpoint-log) Follow Deployment Logs",
+            "type": "shell",
+            "command": "kubectl logs -f -n ${input:namespace} -l app=${input:deploymentName} --all-containers=true",
+            "problemMatcher": []
+        },
+        {
+            "label": "Kube: 🗑️ Delete Deployment",
+            "type": "shell",
+            "command": "kubectl delete deploy -n ${input:namespace} ${input:deploymentName} ",
+            "problemMatcher": []
+        },
+        {
+        "label": "Pre-Setup: Run a Setup Script",
+        "type": "shell",
+        "command": "./pre_setup/${input:setupScript}",
+        "options": { "cwd": "${workspaceFolder}" },
+        "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },        },
+        {
+            "label": "Kube: 🗑️ Delete Pod",
+            "type": "shell",
+            "command": "kubectl delete pod -n ${input:namespace} ${input:podName}",
+        },
+        {
+            "label": "Kube: 🐳 Exec into Pod (sh)",
+            "type": "shell",
+            "command": "kubectl exec -n ${input:namespace} -it ${input:podName} -- sh",
+            "presentation": { "reveal": "always", "panel": "new", "clear": true },
+        },
+        {
+            "label": "Kube: 🔎 Describe Pod",
+            "type": "shell",
+            "command": "kubectl describe pod -n ${input:namespace} ${input:podName}",
+            "presentation": { "reveal": "always", "panel": "new", "clear": true },
+        },
+        {
+            "label": "Kube: 📜 View Pod YAML",
+            "type": "shell",
+            "command": "kubectl get pod -n ${input:namespace} ${input:podName} -o yaml",
+            "presentation": { "reveal": "always", "panel": "new", "clear": true },
+        },
+        {
+            "label": "Kube: $(debug-breakpoint-log) View Container Logs",
+            "type": "shell",
+            "command": "kubectl logs -f -n ${input:namespace} ${input:podName} -c ${input:containerName}",
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "panel": "new", "clear": true },
         },
         {
             "label": "✅ Full Apply: Infrastructure",
@@ -282,7 +347,7 @@
             ],
             "command": "echo '✅ Full Infrastructure Apply Workflow Finished Successfully!'",
             "type": "shell",
-            "problemMatcher": [],
+
             "presentation": { "reveal": "always", "panel": "new", "clear": true }
         },
         {
@@ -296,7 +361,7 @@
             ],
             "command": "echo '❌ Full Infrastructure Destroy Workflow Finished Successfully!'",
             "type": "shell",
-            "problemMatcher": [],
+
             "presentation": { "reveal": "always", "panel": "new", "clear": true }
         },
         {
@@ -310,7 +375,7 @@
             ],
             "command": "echo '✅ Full Application Deployment Workflow Finished Successfully!'",
             "type": "shell",
-            "problemMatcher": [],
+
             "presentation": { "reveal": "always", "panel": "new", "clear": true }
         },
         {
@@ -322,8 +387,98 @@
             ],
             "command": "echo '❌ Full Application Destroy Workflow Finished Successfully!'",
             "type": "shell",
-            "problemMatcher": [],
+
             "presentation": { "reveal": "always", "panel": "new", "clear": true }
+        },
+
+    ],
+    "inputs": [
+        {
+            "id": "setupScript",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "for f in pre_setup/*.sh; do bf=$(basename \"$f\"); desc=$(echo \"$bf\" | sed -e 's/\\.sh$//' -e 's/-/ /g' -e 's/\\b\\w/\\u&/g'); echo \"$bf|⚙️ $desc|Run the '$bf' script\"; done",
+                "fieldSeparator": "|",
+                "description": "Select a pre-setup script to execute"
+            }
+        },
+        {
+            "id": "kubeconfigFile",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "ls -1 kubeconfig/*.yaml | xargs -n 1 basename | awk '{print $1\"|🛠️ \"$1}'",
+                "fieldSeparator": "|",
+                "description": "Select a kubeconfig file to start a new shell with"
+            }
+        },
+                {
+            "id": "argoScript",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "for f in argocd/*.sh; do bf=$(basename \"$f\"); desc=$(echo \"$bf\" | sed -e 's/\\.sh$//' -e 's/-/ /g' -e 's/_/ /g' -e 's/\\b\\w/\\u&/g'); echo \"$bf|🚀 $desc|Run the '$bf' script\"; done",
+                "fieldSeparator": "|",
+                "description": "Select an ArgoCD script to execute"
+            }
+        },
+        {
+        "id": "manifestFile",
+        "type": "command",
+        "command": "shellCommand.execute",
+        "args": {
+            "command": "for f in \"install apps\"/*.yaml; do bf=$(basename \"$f\"); desc=$(echo \"$bf\" | sed -e 's/\\.yaml$//' -e 's/-/ /g' -e 's/\\b\\w/\\u&/g'); echo \"$bf|📄$desc|Apply the $bf manifest\"; done",
+            "fieldSeparator": "|",
+            "description": "Select a manifest file to apply"
         }
+        },
+            {
+      "id": "namespace",
+      "type": "command",
+      "command": "shellCommand.execute",
+      "args": {
+        "command": "kubectl get ns -o custom-columns=:metadata.name | tail -n +2 | awk '{print $1 \"|📂 Namespace: \"$1}'",
+        "fieldSeparator": "|",
+        "description": "Select Namespace"
+      }
+    },
+    {
+      "id": "podName",
+      "type": "command",
+      "command": "shellCommand.execute",
+      "args": {
+        "command": "kubectl get pods -n ${input:namespace} -o custom-columns=:metadata.name,:status.phase,:status.containerStatuses[0].ready | tail -n +2 | awk '{status=$2; ready=$3; printf \"%s|$(package) Pod: %-40s | Status: %-10s | Ready: %s\\n\", $1,$1,status,ready}'",
+        "fieldSeparator": "|",
+        "description": "Select Pod"
+      }
+    },
+      {
+        "id": "containerName",
+        "type": "command",
+        "command": "shellCommand.execute",
+        "args": {
+            "command": "kubectl get pod ${input:podName} -n ${input:namespace} -o jsonpath='{.spec.containers[*].name}' | tr ' ' '\\n' | awk '{print $1 \"|$(extensions) Container: \"$1}'",
+            "fieldSeparator": "|",
+            "description": "Select Container"
+        }
+    },
+    {
+        "id": "deploymentName",
+        "type": "command",
+        "command": "shellCommand.execute",
+        "args": {
+            "command": "kubectl get deploy -n ${input:namespace} -o custom-columns=:metadata.name,:status.availableReplicas,:status.replicas | tail -n +2 | awk '{avail=$2; total=$3; printf \"%s|$(briefcase) Deployment: %-30s | Replicas: %s/%s\\n\", $1,$1,avail,total}'",
+            "fieldSeparator": "|",
+            "description": "Select Deployment"
+        }
+    },
+
+
+
+
+
+
+
     ]
 }

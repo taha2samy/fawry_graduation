@@ -15,4 +15,8 @@ cluster.yaml
 ./kubeconfig-tunneled.yaml
 *terraform.tfstate*
 install apps/*
+kubeconfig/*
+kops/cluster.yaml
+pre_setup/*
+.env
 **/README*

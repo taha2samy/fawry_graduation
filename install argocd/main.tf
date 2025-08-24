@@ -13,7 +13,7 @@ locals {
 
 module "argocd" {
   source          = "./modules/argocd"
-  kubeconfig_path = "./../kubeconfig-original.yaml"
+  kubeconfig_path = "./../kubeconfig/kubeconfig-original.yaml"
   values_file     = "/argo-values-aws.yaml"
   output_path     = "./argocd"
   namespace       = local.argocd_namespace
@@ -30,7 +30,7 @@ locals {
 }
 
 resource "local_file" "port_forward_script" {
-  filename = "${path.root}/../argocd/argo_forwarding.sh"
+  filename = "${path.root}/../argocd/argo_port_forwarding.sh"
   content  = templatefile("${path.module}/templates/port_forward.sh.tpl", {
     kubeconfig_path = "./../kubeconfig-original.yaml"
     service_name    = "argocd-server"
@@ -83,17 +83,9 @@ locals {
   repo_username = "taha2samy"
 }
 
-resource "local_file" "argocd_repository" {
-  filename = "${path.module}/../install apps/argocd-repository.yaml"
-  content  = templatefile("${path.module}/templates/argocd-repository-secret.yaml.tpl", {
-    argocd_namespace = local.target_namespace
-    repo_url         = local.repo_url
-    repo_username    = local.repo_username
-    github_pat       = local.github_pat
-  })
-}
+
 resource "local_file" "repo_setup_script" {
-  filename        = "${path.module}/../install apps/setup-repo.sh"
+  filename        = "${path.module}/../argocd/add-repo.sh"
   file_permission = "0755"
   content         = templatefile("${path.module}/templates/setup-repo.sh.tpl", {
     argocd_server_addr = "localhost:8080"

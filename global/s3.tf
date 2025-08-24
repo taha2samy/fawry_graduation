@@ -34,7 +34,7 @@ resource "local_file" "apply_on_cluster" {
   })
 }
 resource "local_file" "delete_cluster" {
-  filename = "${path.module}/../pre_setup/delete-cluster.sh"
+  filename = "${path.module}/../k8s_remover/delete-cluster.sh"
   content  = templatefile("${path.module}/scripts/delete-cluster.sh.tpl", {
     bucket_name = "s3://${aws_s3_bucket.backend.bucket}"
     cluster_name = var.kops_cluster_name
