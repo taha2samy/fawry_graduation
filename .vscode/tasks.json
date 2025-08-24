@@ -2,6 +2,22 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Git: 🔍 Show Commit Details",
+            "type": "shell",
+            "command": "git show --stat ${input:commitHash}",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "focus": true,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+
+        {
             "label": "Global: Init",
             "type": "shell",
             "detail": "init terraform for basic infrastructure",
@@ -496,7 +512,18 @@
                 "fieldSeparator": "|",
                 "description": "Select a branch to switch to"
             }
+        },
+                {
+            "id": "commitHash",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "git log -n 25 --pretty=format:'%h|$(git-commit) %s|🧑 %an|🕒 %ar'",
+                "fieldSeparator": "|",
+                "description": "Select a commit to see its details"
+            }
         }
+
 
 
 
