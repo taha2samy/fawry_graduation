@@ -280,6 +280,20 @@
                 "clear": true
             },
         },
+                {
+            "label": "Git: 🌿 Switch Branch",
+            "type": "shell",
+            "command": "git checkout ${input:branchName}",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "never",
+                "focus": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
         {
             "label": "Kube: 📜 View Deployment YAML",
             "type": "shell",
@@ -473,6 +487,16 @@
             "description": "Select Deployment"
         }
     },
+        {
+            "id": "branchName",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "git for-each-ref refs/heads --sort=-committerdate --format=\"%(refname:short)|%(if)%(HEAD)%(then)⭐%(else)\\$(git-branch)%(end) %(refname:short)|🧑 %(authorname)|🕒 Last update: %(committerdate:relative)\"",
+                "fieldSeparator": "|",
+                "description": "Select a branch to switch to"
+            }
+        }
 
 
 
