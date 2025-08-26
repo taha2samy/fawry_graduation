@@ -6,7 +6,10 @@
             "type": "shell",
             "command": "git show --stat ${input:commitHash}",
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "statusbar": {
+                    "hide": true
+                }
             },
             "presentation": {
                 "reveal": "always",
@@ -22,7 +25,7 @@
             "type": "shell",
             "detail": "init terraform for basic infrastructure",
             "command": "terraform init -upgrade",
-            "options": { "cwd": "${workspaceFolder}/global" },
+            "options": { "cwd": "${workspaceFolder}/global", "statusbar": { "hide": true } },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -36,7 +39,8 @@
             "label": "Global: Apply",
             "type": "shell",
             "command": "terraform apply -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/global" },
+            "options": { "cwd": "${workspaceFolder}/global", "statusbar": { "hide": true },                    "label":"$(cloud-upload) Infra up",
+                    "color": "#16ff01"},
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -45,12 +49,13 @@
                 "showReuseMessage": true,
                 "clear": true
             }
+            
         },
         {
             "label": "Global: Destroy",
             "type": "shell",
             "command": "terraform destroy -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/global" },
+            "options": { "cwd": "${workspaceFolder}/global", "statusbar": { "hide": true } },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -64,7 +69,7 @@
             "label": "K8s Generator: Init",
             "type": "shell",
             "command": "terraform init -upgrade",
-            "options": { "cwd": "${workspaceFolder}/k8s-generator" },
+            "options": { "cwd": "${workspaceFolder}/k8s-generator", "statusbar": { "hide": true } },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -78,7 +83,7 @@
             "label": "K8s Generator: Apply",
             "type": "shell",
             "command": "terraform apply -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/k8s-generator" },
+            "options": { "cwd": "${workspaceFolder}/k8s-generator", "statusbar": { "hide": true } },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -92,7 +97,7 @@
             "label": "K8s Generator: Destroy",
             "type": "shell",
             "command": "terraform destroy -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/k8s-generator" },
+            "options": { "cwd": "${workspaceFolder}/k8s-generator", "statusbar": { "hide": true } },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -106,7 +111,7 @@
             "label": "K8s Cluster: Init",
             "type": "shell",
             "command": "terraform init -upgrade",
-            "options": { "cwd": "${workspaceFolder}/k8s" },
+            "options": { "cwd": "${workspaceFolder}/k8s","statusbar": { "hide": true } },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -120,7 +125,7 @@
             "label": "K8s Cluster: Apply",
             "type": "shell",
             "command": "terraform apply -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/k8s" },
+            "options": { "cwd": "${workspaceFolder}/k8s", "statusbar": { "hide": true } },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -134,7 +139,7 @@
             "label": "K8s Cluster: Destroy",
             "type": "shell",
             "command": "terraform destroy -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/k8s" },
+            "options": { "cwd": "${workspaceFolder}/k8s", "statusbar": { "hide": true } },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -149,7 +154,8 @@
             "type": "shell",
             "command":  "touch .env && (grep -q '^export KUBECONFIG=' .env || ( [ -s .env ] && sed -i \"1i export KUBECONFIG=kubeconfig/${input:kubeconfigFile}\" .env || echo \"export KUBECONFIG=kubeconfig/${input:kubeconfigFile}\" > .env )) && echo '.env file updated successfully!'",
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "statusbar": { "hide": true }
             },
             "presentation": {
                 "reveal": "silent",
@@ -165,7 +171,9 @@
             "type": "shell",
             "command": "./argocd/${input:argoScript}",
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "statusbar": { "hide": true }
+
             },
             "presentation": {
                 "reveal": "always",
@@ -177,8 +185,8 @@
             "label": "ArgoCD: Init",
             "type": "shell",
             "command": "terraform init",
-            "options": { "cwd": "${workspaceFolder}/install argocd" },
-            
+            "options": { "cwd": "${workspaceFolder}/install argocd", "statusbar": { "hide": true } },
+
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -193,8 +201,8 @@
             "label": "ArgoCD: Install",
             "type": "shell",
             "command": "terraform apply -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/install argocd" },
-    
+            "options": { "cwd": "${workspaceFolder}/install argocd", "statusbar": { "hide": true } },
+
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -208,7 +216,7 @@
             "label": "ArgoCD: Destroy",
             "type": "shell",
             "command": "terraform destroy -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/install argocd" },
+            "options": { "cwd": "${workspaceFolder}/install argocd", "statusbar": { "hide": true } },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -222,7 +230,7 @@
             "label": "ArgoCD: 🔌 Port Forward",
             "type": "shell",
             "command": "./argocd/argo_port_forwarding.sh",
-            "options": { "cwd": "${workspaceFolder}" },
+            "options": { "cwd": "${workspaceFolder}", "statusbar": { "hide": true } },
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -237,29 +245,29 @@
             "label": "ArgoCD Repo: Setup",
             "type": "shell",
             "command": "./setup-repo.sh",
-            "options": { "cwd": "${workspaceFolder}/install apps" },
+            "options": { "cwd": "${workspaceFolder}/install apps", "statusbar": { "hide": true } },
             "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
         },
         {
             "label": "Apps (Manifests): Apply",
             "type": "shell",
             "command": "kubectl apply -f . -R",
-            "options": { "cwd": "${workspaceFolder}/install apps" },
+            "options": { "cwd": "${workspaceFolder}/install apps", "statusbar": { "hide": true } },
             "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
         },
         {
             "label": "Apps (Manifests): Delete",
             "type": "shell",
             "command": "kubectl delete -f . -R",
-            "options": { "cwd": "${workspaceFolder}/install apps" },
+            "options": { "cwd": "${workspaceFolder}/install apps", "statusbar": { "hide": true } },
             "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
         },
         {
             "label": "K8s: Destruction",
             "type": "shell",
             "command": "k8s_remover/delete-cluster.sh",
-            "options": { "cwd": "${workspaceFolder}" },
-            
+            "options": { "cwd": "${workspaceFolder}", "statusbar": { "hide": true } },
+
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -274,21 +282,22 @@
             "type": "shell",
             "command": "kubectl apply -f 'install apps/${input:manifestFile}'",
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "statusbar": { "hide": true }
             },
             "presentation": {
                 "reveal": "always",
                 "panel": "dedicated",
                 "clear": true
             },
-            "": []
         },
         {
             "label": "Kube: 📄 delete a Single Manifest of apps",
             "type": "shell",
         "command": "kubectl delete -f 'install apps/${input:manifestFile}'",
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "statusbar": { "hide": true }
             },
             "presentation": {
                 "reveal": "always",
@@ -301,7 +310,8 @@
             "type": "shell",
             "command": "git checkout ${input:branchName}",
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "statusbar": { "hide": true }
             },
             "presentation": {
                 "reveal": "never",
@@ -314,48 +324,75 @@
             "label": "Kube: 📜 View Deployment YAML",
             "type": "shell",
             "command": "kubectl get deploy -n ${input:namespace} ${input:deploymentName} -o yaml",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "statusbar": { "hide": true }
+            },
+
         },
         {
             "label": "Kube: $(debug-breakpoint-log) Follow Deployment Logs",
             "type": "shell",
             "command": "kubectl logs -f -n ${input:namespace} -l app=${input:deploymentName} --all-containers=true",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "statusbar": { "hide": true }
+            },
+
         },
         {
             "label": "Kube: 🗑️ Delete Deployment",
             "type": "shell",
             "command": "kubectl delete deploy -n ${input:namespace} ${input:deploymentName} ",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "statusbar": { "hide": true }
+            },
+
         },
         {
         "label": "Pre-Setup: Run a Setup Script",
         "type": "shell",
         "command": "./pre_setup/${input:setupScript}",
-        "options": { "cwd": "${workspaceFolder}" },
+        "options": { "cwd": "${workspaceFolder}" ,"statusbar": { "hide": true }},
         "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },        },
         {
             "label": "Kube: 🗑️ Delete Pod",
             "type": "shell",
             "command": "kubectl delete pod -n ${input:namespace} ${input:podName}",
+            "options": {
+                "statusbar": { "hide": true }
+            },
+
         },
         {
             "label": "Kube: 🐳 Exec into Pod (sh)",
             "type": "shell",
             "command": "kubectl exec -n ${input:namespace} -it ${input:podName} -- sh",
             "presentation": { "reveal": "always", "panel": "new", "clear": true },
+            "options": {
+                "statusbar": { "hide": true }
+            },
+
         },
         {
             "label": "Kube: 🔎 Describe Pod",
             "type": "shell",
             "command": "kubectl describe pod -n ${input:namespace} ${input:podName}",
             "presentation": { "reveal": "always", "panel": "new", "clear": true },
+            "options": {
+                "statusbar": { "hide": true }
+            },
+
         },
         {
             "label": "Kube: 📜 View Pod YAML",
             "type": "shell",
             "command": "kubectl get pod -n ${input:namespace} ${input:podName} -o yaml",
             "presentation": { "reveal": "always", "panel": "new", "clear": true },
+            "options": {
+                "statusbar": { "hide": true }
+            }
         },
         {
             "label": "Kube: $(debug-breakpoint-log) View Container Logs",
@@ -363,6 +400,9 @@
             "command": "kubectl logs -f -n ${input:namespace} ${input:podName} -c ${input:containerName}",
             "problemMatcher": [],
             "presentation": { "reveal": "always", "panel": "new", "clear": true },
+            "options": {
+                "statusbar": { "hide": true }
+            }
         },
         {
             "label": "✅ Full Apply: Infrastructure",
@@ -377,6 +417,15 @@
             ],
             "command": "echo '✅ Full Infrastructure Apply Workflow Finished Successfully!'",
             "type": "shell",
+            "options": {
+                "statusbar": 
+                {  
+                    "label":"$(cloud-upload) Infra up",
+                    "color": "#16ff01"
+                }
+            },
+
+
 
             "presentation": { "reveal": "always", "panel": "new", "clear": true }
         },
@@ -385,12 +434,19 @@
             "dependsOrder": "sequence",
             "dependsOn": [
                 "K8s: Destruction" ,
-                "K8s Cluster: Destroy",
                 "K8s Generator: Destroy",
                 "Global: Destroy"
             ],
             "command": "echo '❌ Full Infrastructure Destroy Workflow Finished Successfully!'",
             "type": "shell",
+            "options": {
+                "statusbar": 
+                {  
+                    "label":"$(cloud-download) Infra Down",
+                    "color": "#e75d5d"
+                },
+
+            },
 
             "presentation": { "reveal": "always", "panel": "new", "clear": true }
         },
@@ -405,6 +461,11 @@
             ],
             "command": "echo '✅ Full Application Deployment Workflow Finished Successfully!'",
             "type": "shell",
+            "options": {
+                "statusbar": { "hide": true }
+            },
+
+
 
             "presentation": { "reveal": "always", "panel": "new", "clear": true }
         },
@@ -418,7 +479,12 @@
             "command": "echo '❌ Full Application Destroy Workflow Finished Successfully!'",
             "type": "shell",
 
-            "presentation": { "reveal": "always", "panel": "new", "clear": true }
+            "presentation": { "reveal": "always", "panel": "new", "clear": true },
+            "options": {
+                "statusbar": { "hide": true }
+            },
+
+
         },
 
     ],
