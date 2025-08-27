@@ -60,35 +60,36 @@ resource "null_resource" "kops_generate_terraform" {
     EOT
   }
   provisioner "local-exec" {
-    command = <<-EOT
-    until kops validate cluster --name "${self.triggers.cluster_name}" --state "${self.triggers.s3_url}/${self.triggers.kops_state_store}" >/dev/null 2>&1; do
-      echo "Waiting for cluster ${self.triggers.cluster_name} to be ready..."
-      sleep 10
-    done
-      kops export kubeconfig \
-        --name "${local.cluster_name}" \
-        --state "${self.triggers.s3_url}/${self.triggers.kops_state_store}" \
-        --admin \
-        --kubeconfig ../kubeconfig/kubeconfig-original.yaml
+command = <<-EOT
+  until kops validate cluster --name "${self.triggers.cluster_name}" --state "${self.triggers.s3_url}/${self.triggers.kops_state_store}" >/dev/null 2>&1; do
+    echo "Waiting for cluster ${self.triggers.cluster_name} to be ready..."
+    sleep 10
+  done
 
-      cp ../kubeconfig/kubeconfig-original.yaml ../kubeconfig/kubeconfig-tunneled.yaml
-      yq -i '(.clusters[] | select(.name == "${local.cluster_name}").cluster.server) = "https://127.0.0.1:8443"' ../kubeconfig/kubeconfig-tunneled.yaml
-      kops get cluster ${local.cluster_name} --state="${self.triggers.s3_url}/${self.triggers.kops_state_store}" -o yaml > ../kops/cluster.yaml
-      yq e '.spec.awsLoadBalancerController.enabled = true' -i ../kops/cluster.yaml
-      yq e '.spec.certManager.enabled = true' -i ../kops/cluster.yaml
-      kops replace -f ../kops/cluster.yaml --state="${self.triggers.s3_url}/${self.triggers.kops_state_store}"
-      kops update cluster ${local.cluster_name} --state="${local.s3_url}/${local.kops_state_store}" --yes
-      OUTPUT_DIR="../kops"
+  kops export kubeconfig \
+    --name "${local.cluster_name}" \
+    --state "${self.triggers.s3_url}/${self.triggers.kops_state_store}" \
+    --admin \
+    --kubeconfig ../kubeconfig/kubeconfig-original.yaml
 
-      for ig_name in $(kops get ig --name "${local.cluster_name}" --state="${local.s3_url}/${local.kops_state_store}" | awk 'NR>1 {print $1}')
-      do
-        echo "-> Exporting spec for '${ig_name}' to ${OUTPUT_DIR}/${ig_name}.yaml"
-        
-        # Get the YAML for the specific instance group and redirect the output to a file
-        kops get ig --name "${local.cluster_name}" --state="${local.s3_url}/${local.kops_state_store}" "${ig_name}" -o yaml > "${OUTPUT_DIR}/${ig_name}.yaml"
-      done
+  cp ../kubeconfig/kubeconfig-original.yaml ../kubeconfig/kubeconfig-tunneled.yaml
+  yq -i '(.clusters[] | select(.name == "${local.cluster_name}").cluster.server) = "https://127.0.0.1:8443"' ../kubeconfig/kubeconfig-tunneled.yaml
 
-    EOT
+  kops get cluster ${local.cluster_name} --state="${self.triggers.s3_url}/${self.triggers.kops_state_store}" -o yaml > ../kops/cluster.yaml
+  yq e '.spec.awsLoadBalancerController.enabled = true' -i ../kops/cluster.yaml
+  yq e '.spec.certManager.enabled = true' -i ../kops/cluster.yaml
+
+  kops replace -f ../kops/cluster.yaml --state="${self.triggers.s3_url}/${self.triggers.kops_state_store}"
+  kops update cluster ${local.cluster_name} --state="${local.s3_url}/${local.kops_state_store}" --yes
+
+  OUTPUT_DIR="../kops"
+
+  for ig_name in $(kops get ig --name "${local.cluster_name}" --state="${local.s3_url}/${local.kops_state_store}" | awk 'NR>1 {print $1}')
+  do
+    echo "-> Exporting spec for '$${ig_name}' to $${OUTPUT_DIR}/$${ig_name}.yaml"
+    kops get ig --name "${local.cluster_name}" --state="${local.s3_url}/${local.kops_state_store}" "$${ig_name}" -o yaml > "$${OUTPUT_DIR}/$${ig_name}.yaml"
+  done
+EOT
   }
   provisioner "local-exec" {
   when    = destroy

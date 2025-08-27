@@ -2,6 +2,118 @@
     "version": "2.0.0",
     "tasks": [
         {
+  "label": "Kops: ✅ Validate Cluster",
+  "type": "shell",
+  "command": "source .env && kops validate cluster --name $CLUSTER_NAME --state $KOPS_STATE_STORE",
+  "options": {
+    "cwd": "${workspaceFolder}",
+    "env": {
+      "CLUSTER_NAME": "${env:CLUSTER_NAME}",
+      "KOPS_STATE_STORE": "${env:KOPS_STATE_STORE}"
+    },
+    "statusbar": {
+      "hide": true
+    }
+  },
+  "presentation": {
+    "reveal": "always",
+    "panel": "new",
+    "focus": true,
+    "clear": true
+  },
+  "problemMatcher": []
+},
+  {
+    "label": "Kops: 🌱 Create Cluster",
+    "type": "shell",
+    "command": "source .env &&kops create -f ${input:fileYaml} --name $CLUSTER_NAME --state $KOPS_STATE_STORE",
+    "options": {
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "CLUSTER_NAME": "${env:CLUSTER_NAME}",
+        "KOPS_STATE_STORE": "${env:KOPS_STATE_STORE}"
+      },
+      "statusbar": {
+        "hide": true
+      }
+    },
+    "presentation": {
+      "reveal": "always",
+      "panel": "new",
+      "focus": true,
+      "clear": true
+    },
+    "problemMatcher": []
+  },
+  {
+    "label": "Kops: 🔄 Update Cluster",
+    "type": "shell",
+    "command": "source .env && kops update cluster --name $CLUSTER_NAME --state $KOPS_STATE_STORE --yes",
+    "options": {
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "CLUSTER_NAME": "${env:CLUSTER_NAME}",
+        "KOPS_STATE_STORE": "${env:KOPS_STATE_STORE}"
+      },
+      "statusbar": {
+        "hide": true
+      }
+    },
+    "presentation": {
+      "reveal": "always",
+      "panel": "new",
+      "focus": true,
+      "clear": true
+    },
+    "problemMatcher": []
+  },
+  {
+    "label": "Kops: 🚀 Rolling Update",
+    "type": "shell",
+    "command": "source .env && kops rolling-update cluster --name $CLUSTER_NAME --state $KOPS_STATE_STORE --yes",
+    "options": {
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "CLUSTER_NAME": "${env:CLUSTER_NAME}",
+        "KOPS_STATE_STORE": "${env:KOPS_STATE_STORE}"
+      },
+      "statusbar": {
+        "hide": true
+      }
+    },
+    "presentation": {
+      "reveal": "always",
+      "panel": "new",
+      "focus": true,
+      "clear": true
+    },
+    "problemMatcher": []
+  },
+  {
+    "label": "Kops: ♻️ Replace Cluster Config",
+    "type": "shell",
+    "command": "source .env && kops replace -f ${input:fileYaml} --name $CLUSTER_NAME --state $KOPS_STATE_STORE --force",
+    "options": {
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "CLUSTER_NAME": "${env:CLUSTER_NAME}",
+        "KOPS_STATE_STORE": "${env:KOPS_STATE_STORE}"
+      },
+      "statusbar": {
+        "hide": true
+      }
+    },
+    "presentation": {
+      "reveal": "always",
+      "panel": "new",
+      "focus": true,
+      "clear": true
+    },
+    "problemMatcher": []
+  },
+
+
+        {
             "label": "Git: 🔍 Show Commit Details",
             "type": "shell",
             "command": "git show --stat ${input:commitHash}",
@@ -529,7 +641,21 @@
                 "fieldSeparator": "|",
                 "description": "Select a commit to see its details"
             }
-        }
+        },
+{
+  "id": "fileYaml",
+  "type": "command",
+  "command": "shellCommand.execute",
+  "args": {
+    "command": "for f in kops/*.yaml; do bf=$(basename \"$f\"); desc=$(echo \"$bf\" | sed -e 's/\\.yaml$//' -e 's/-/ /g' -e 's/\\b\\w/\\u&/g'); echo \"$f|📄 $desc|YAML file: $bf\"; done",
+    "fieldSeparator": "|",
+    "description": "Select a YAML file from kops/",
+    "labelIndex": 1,
+    "valueIndex": 0,
+    "descriptionIndex": 2
+  }
+}
+
 
 
 
