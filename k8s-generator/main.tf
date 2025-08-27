@@ -73,12 +73,21 @@ resource "null_resource" "kops_generate_terraform" {
 
       cp ../kubeconfig/kubeconfig-original.yaml ../kubeconfig/kubeconfig-tunneled.yaml
       yq -i '(.clusters[] | select(.name == "${local.cluster_name}").cluster.server) = "https://127.0.0.1:8443"' ../kubeconfig/kubeconfig-tunneled.yaml
-      kops get cluster api.${local.cluster_name} --state="${self.triggers.s3_url}/${self.triggers.kops_state_store}" -o yaml > ../kops/cluster.yaml
+      kops get cluster ${local.cluster_name} --state="${self.triggers.s3_url}/${self.triggers.kops_state_store}" -o yaml > ../kops/cluster.yaml
       yq e '.spec.awsLoadBalancerController.enabled = true' -i ../kops/cluster.yaml
       yq e '.spec.certManager.enabled = true' -i ../kops/cluster.yaml
       kops replace -f ../kops/cluster.yaml --state="${self.triggers.s3_url}/${self.triggers.kops_state_store}"
       kops update cluster ${local.cluster_name} --state="${local.s3_url}/${local.kops_state_store}" --yes
-      kops rolling-update cluster ${local.cluster_name} --state="${local.s3_url}/${local.kops_state_store}"  --yes
+      OUTPUT_DIR="../kops"
+
+      for ig_name in $(kops get ig --name "${local.cluster_name}" --state="${local.s3_url}/${local.kops_state_store}" | awk 'NR>1 {print $1}')
+      do
+        echo "-> Exporting spec for '${ig_name}' to ${OUTPUT_DIR}/${ig_name}.yaml"
+        
+        # Get the YAML for the specific instance group and redirect the output to a file
+        kops get ig --name "${local.cluster_name}" --state="${local.s3_url}/${local.kops_state_store}" "${ig_name}" -o yaml > "${OUTPUT_DIR}/${ig_name}.yaml"
+      done
+
     EOT
   }
   provisioner "local-exec" {

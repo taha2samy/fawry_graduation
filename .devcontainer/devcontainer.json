@@ -9,7 +9,12 @@
       "extensions": [
         "ms-python.python",
         "redhat.vscode-yaml",
-        "redhat.java"
+        "redhat.java",
+        "actboy168.tasks",
+        "augustocdias.tasks-shell-input",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "GitHub.vscode-github-actions",
+        "hashicorp.terraform"
       ]
     }
   },
