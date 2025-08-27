@@ -16,28 +16,4 @@ resource "aws_s3_bucket_public_access_block" "private" {
   block_public_policy     = true
   ignore_public_acls      = true
 }
-resource "local_file" "config" {
-  filename = "${path.module}/../pre_setup/add_loadBalancer_and_certManager.sh"
-  content  = templatefile("${path.module}/scripts/config.sh.tpl", {
-    bucket_name = "s3://${aws_s3_bucket.backend.bucket}"
-    cluster_name = var.kops_cluster_name
-    state_store = var.kops_state_store
-  })
-}
 
-resource "local_file" "apply_on_cluster" {
-  filename = "${path.module}/../pre_setup/apply-on-cluster.sh"
-  content  = templatefile("${path.module}/scripts/apply-on-cluster-sh.tpl", {
-    bucket_name = "s3://${aws_s3_bucket.backend.bucket}"
-    cluster_name = var.kops_cluster_name
-    state_store = var.kops_state_store
-  })
-}
-resource "local_file" "delete_cluster" {
-  filename = "${path.module}/../k8s_remover/delete-cluster.sh"
-  content  = templatefile("${path.module}/scripts/delete-cluster.sh.tpl", {
-    bucket_name = "s3://${aws_s3_bucket.backend.bucket}"
-    cluster_name = var.kops_cluster_name
-    state_store = var.kops_state_store
-  })
-}

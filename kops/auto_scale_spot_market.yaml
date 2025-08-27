@@ -7,8 +7,8 @@ metadata:
 spec:
   role: Node
   image: 099720109477/ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610
-  minSize: 4
-  maxSize: 10
+  minSize: 2
+  maxSize: 5
   subnets:
     - eu-west-1a
     - eu-west-1b
@@ -21,22 +21,16 @@ spec:
       onDemandAboveBase: 0
       spotAllocationStrategy: capacity-optimized-prioritized
     instances:
-    - t3.xlarge
-    - t3a.xlarge
-    - t3.large
-    - t3a.large
     - t3.medium
     - t3a.medium
+    - t3.small
+    - t3a.small
     overrides:
-    - instanceType: t3.xlarge
-      weightedCapacity: "4"
-    - instanceType: t3a.xlarge
-      weightedCapacity: "4"
-    - instanceType: t3.large
-      weightedCapacity: "2"
-    - instanceType: t3a.large
-      weightedCapacity: "2"
     - instanceType: t3.medium
       weightedCapacity: "2"
     - instanceType: t3a.medium
       weightedCapacity: "2"
+    - instanceType: t3.small
+      weightedCapacity: "1"
+    - instanceType: t3a.small
+      weightedCapacity: "1"

@@ -108,48 +108,6 @@
             }
         },
         {
-            "label": "K8s Cluster: Init",
-            "type": "shell",
-            "command": "terraform init -upgrade",
-            "options": { "cwd": "${workspaceFolder}/k8s","statusbar": { "hide": true } },
-            "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": true
-            }
-        },
-        {
-            "label": "K8s Cluster: Apply",
-            "type": "shell",
-            "command": "terraform apply -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/k8s", "statusbar": { "hide": true } },
-            "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": true
-            }
-        },
-        {
-            "label": "K8s Cluster: Destroy",
-            "type": "shell",
-            "command": "terraform destroy -auto-approve",
-            "options": { "cwd": "${workspaceFolder}/k8s", "statusbar": { "hide": true } },
-            "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": true
-            }
-        },
-        {
             "label": "Kube: 🛠️ set kubeconfig",
             "type": "shell",
             "command":  "touch .env && (grep -q '^export KUBECONFIG=' .env || ( [ -s .env ] && sed -i \"1i export KUBECONFIG=kubeconfig/${input:kubeconfigFile}\" .env || echo \"export KUBECONFIG=kubeconfig/${input:kubeconfigFile}\" > .env )) && echo '.env file updated successfully!'",
@@ -262,21 +220,7 @@
             "options": { "cwd": "${workspaceFolder}/install apps", "statusbar": { "hide": true } },
             "presentation": { "reveal": "silent", "panel": "dedicated", "clear": true }
         },
-        {
-            "label": "K8s: Destruction",
-            "type": "shell",
-            "command": "k8s_remover/delete-cluster.sh",
-            "options": { "cwd": "${workspaceFolder}", "statusbar": { "hide": true } },
 
-            "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": true
-            }
-        },
         {
             "label": "Kube: 📄 Apply a Single Manifest of apps",
             "type": "shell",
@@ -412,8 +356,6 @@
                 "Global: Apply",
                 "K8s Generator: Init",
                 "K8s Generator: Apply",
-                "K8s Cluster: Init",
-                "K8s Cluster: Apply"
             ],
             "command": "echo '✅ Full Infrastructure Apply Workflow Finished Successfully!'",
             "type": "shell",
@@ -433,7 +375,6 @@
             "label": "❌ Full Destroy: Infrastructure",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "K8s: Destruction" ,
                 "K8s Generator: Destroy",
                 "Global: Destroy"
             ],
