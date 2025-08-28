@@ -73,8 +73,7 @@ command = <<-EOT
     --kubeconfig ../kubeconfig/kubeconfig-original.yaml
 
   cp ../kubeconfig/kubeconfig-original.yaml ../kubeconfig/kubeconfig-tunneled.yaml
-  yq -i '(.clusters[] | select(.name == "${local.cluster_name}").cluster.server) = "https://127.0.0.1:8443"' ../kubeconfig/kubeconfig-tunneled.yaml
-
+  yq -i '.clusters[].cluster.server = "https://127.0.0.1:8443"' ../kubeconfig/kubeconfig-tunneled.yaml
   kops get cluster ${local.cluster_name} --state="${self.triggers.s3_url}/${self.triggers.kops_state_store}" -o yaml > ../kops/cluster.yaml
   yq e '.spec.awsLoadBalancerController.enabled = true' -i ../kops/cluster.yaml
   yq e '.spec.certManager.enabled = true' -i ../kops/cluster.yaml
@@ -97,6 +96,7 @@ EOT
     echo "Removing kubeconfig files..."
     rm -f ../kubeconfig/kubeconfig-original.yaml
     rm -f ../kubeconfig/kubeconfig-tunneled.yaml
+    rm -f ../kops/*.yaml
   EOT
 }
   provisioner "local-exec" {
