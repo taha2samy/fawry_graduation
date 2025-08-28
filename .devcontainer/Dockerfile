@@ -7,11 +7,19 @@ RUN dnf install -y --allowerasing \
       python3 \
       python3-pip \
       java-11-openjdk \
-      dnf-plugins-core && \
+      dnf-plugins-core \
+      unzip \
+      sudo && \
     dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo && \
     dnf install -y terraform && \
     curl -Lo /usr/local/bin/kops https://github.com/kubernetes/kops/releases/latest/download/kops-linux-amd64 && \
     chmod +x /usr/local/bin/kops && \
+    curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq && \
+    chmod +x /usr/local/bin/yq && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -rf awscliv2.zip aws && \
     dnf clean all
 
 ARG USERNAME=vscode
