@@ -8,7 +8,7 @@ RUN dnf install -y --allowerasing \
       python3-pip \
       java-11-openjdk \
       dnf-plugins-core && \
-    dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo && \
+    dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo && \
     dnf install -y terraform && \
     curl -Lo /usr/local/bin/kops https://github.com/kubernetes/kops/releases/latest/download/kops-linux-amd64 && \
     chmod +x /usr/local/bin/kops && \
